@@ -1,7 +1,12 @@
-import click
-import ckiptagger
-import os
 import logging
+import os
+
+import ckiptagger
+import click
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+
+from font import get_default_font
 
 logger = logging.getLogger(__name__)
 
@@ -28,17 +33,43 @@ class WordSegmentation(object):
         return self.model(*args, **kwargs)
 
 
+def load_lines(f):
+    with open(f, 'r') as fp:
+        for line in fp.readlines():
+            yield line.strip()
+
+
 @click.command()
-@click.argument('sentence')
-def main(sentence):
+@click.option('-t', '--text-file', default='default.txt')
+@click.option('-o', '--output-file', default='cloud.png')
+@click.option('--show', is_flag=True)
+def main(text_file, output_file, show):
 
+    # load text file
+    lines = list(load_lines(text_file))
+
+    # word segment
     ws = WordSegmentation()
+    word_sentence_list = ws.predict(lines)
 
-    sentence_list = [sentence]
-    word_sentence_list = ws.predict(sentence_list)
-
+    words = []
     for word_sentence in word_sentence_list:
-        print(word_sentence)
+        for word in word_sentence:
+            words.append(word)
+
+    # plot word cloud
+    text = ' '.join(words)
+    wc = WordCloud(font_path=get_default_font(),
+                   relative_scaling=.75,
+                   width=1280,
+                   height=720).generate(text)
+    if output_file:
+        wc.to_file('za_cloud.png')
+
+    if show:
+        plt.imshow(wc)
+        plt.axis("off")
+        plt.show()
 
 
 if __name__ == "__main__":
