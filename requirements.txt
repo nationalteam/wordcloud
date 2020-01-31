@@ -1,3 +1,5 @@
 ckiptagger
+click
+gdown
 matplotlib
 wordcloud
