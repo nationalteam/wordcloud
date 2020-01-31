@@ -1,0 +1,3 @@
+ckiptagger
+matplotlib
+wordcloud
