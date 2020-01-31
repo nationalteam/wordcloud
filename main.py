@@ -64,7 +64,7 @@ def main(text_file, output_file, show):
                    width=1280,
                    height=720).generate(text)
     if output_file:
-        wc.to_file('za_cloud.png')
+        wc.to_file(output_file)
 
     if show:
         plt.imshow(wc)
